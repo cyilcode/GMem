@@ -32,20 +32,30 @@ public class GMemProcess
     /// <returns>Ready to use ptrObject</returns>
     public ptrObject create_ptr_object(int ptrAddress, int[] ptrOffsets)
     {
+        // Get the processes that has the given name
         Process[] processList = Process.GetProcessesByName(g_processName);
         if (processList.Length != 0)
         {
             Process gmProcess = processList[0];
             ProcessModule gmModule;
+            // If the module name and process name is the same, its just main module we don't need to call get_module_by_name
             if (g_processName == g_moduleName)
                 gmModule = gmProcess.MainModule;
             else
                 gmModule = get_module_by_name(gmProcess);
             if (gmModule != null)
             {
-                byte[] ptrBuffer = new byte[sizeof(int)];
+                // No need to calculate anything if its a direct address.
                 if (ptrOffsets != null)
                 {
+                    byte[] ptrBuffer = new byte[sizeof(int)];
+                    /*
+                    A very simple explanation of what is going on here, 
+                    to reach the address that holds the value, you need to execute; 
+                    1) modulebaseaddress + pointer address = calculated address
+                    2) for every offset, read calculated address and add the offset to the value that you get from read.
+                    Final result is the address that holds the value.
+                    */
                     int calculatedAdr = gmModule.BaseAddress.ToInt32() + ptrAddress;
                     foreach (int offset in ptrOffsets)
                     {

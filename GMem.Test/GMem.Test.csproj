@@ -64,6 +64,7 @@
     <Compile Include="GMemReadTests.cs" />
     <Compile Include="GMemWriteTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TLMemoryInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

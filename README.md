@@ -28,6 +28,5 @@ Tests for this solution were done on steam version of Torchlight 2. There are fu
 
 #Stage - Work in Progress
 
- - `GMemProcess::write<T>` function tests will be implemented
  - Support for more data types will be implemented
 
