@@ -16,7 +16,8 @@ A memory management tool for C# which is
      */
     ptrObject obj = gameProc.create_ptr_object(0xFFFFFFFF, int[]{ 0xFF, 0x10 });
     /*
-    Reads and writes are so simple. Functions are generic so you don't need to deal with conversions. GMem supports int,float,double and byte data types but more will be added real soon.
+    Reads and writes are so simple. Functions are generic so you don't need to deal with conversions. 
+    GMem supports int,float,double and byte data types but more will be added real soon.
     */
     // Read
     int intvalue = gameProc.read<int>(obj);
