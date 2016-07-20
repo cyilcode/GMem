@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Linq;
+using System.Text;
 
 public class GMemProcess
 {
@@ -89,9 +90,35 @@ public class GMemProcess
             return (T)(object)BitConverter.ToSingle(dataBuffer, 0);
         else if (typeof(T) == typeof(double))
             return (T)(object)BitConverter.ToDouble(dataBuffer, 0);
+        else if (typeof(T) == typeof(short))
+            return (T)(object)BitConverter.ToInt16(dataBuffer, 0);
+        else if (typeof(T) == typeof(long))
+            return (T)(object)BitConverter.ToInt64(dataBuffer, 0);
         else if (typeof(T) == typeof(byte))
             return (T)(object)dataBuffer[0];
         throw new InvalidCastException("The data type you have entered is not valid.");
+    }
+
+    /// <summary>
+    /// Read the address and converts it to the given data type.
+    /// </summary>
+    /// <typeparam name="T">Returning Type</typeparam>
+    /// <param name="ptrObj">Calculated ptrObject</param>
+    /// <param name="length">Size of Array</param>
+    /// <returns>Value that the given address holds.</returns>
+    public T read<T>(ptrObject ptrObj, int length)
+    {
+        byte[] dataBuffer = new byte[length];
+        ReadProcessMemory(ptrObj.processHandle, ptrObj.calculatedAddress, dataBuffer, dataBuffer.Length, ref g_bytesRead);
+        if (!BitConverter.IsLittleEndian)
+            Array.Reverse(dataBuffer);
+        if (typeof(T) == typeof(string))
+            return (T)(object)Encoding.UTF8.GetString(dataBuffer);
+        else if (typeof(T) == typeof(byte[]))
+            return (T)(object)dataBuffer;
+        else if (typeof(T) == typeof(string[]))
+            return (T)(object)(BitConverter.ToString(dataBuffer).Split('-'));
+        throw new InvalidOperationException("The data type you have entered is not valid.");
     }
 
     public bool write<T>(ptrObject ptrObj, object value)

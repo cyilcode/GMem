@@ -17,6 +17,10 @@ namespace GMem.Test
         private const float playerFullMana              = 82;
         private const byte playerSkillPoints            = 50;
         private const double playerStats                = 1.06099789572967E-312; // 50 stat points as int.
+        private const long playerGoldLong               = 41047002449209; // 1337 as int.
+        private const string UIACLabel                  = "Active Quests";
+        private readonly byte[] rawBytes                = new byte[] { 65, 99, 116, 105, 118, 101, 32, 81, 117, 101, 115, 116, 115 };
+        private readonly string[] AOB                   = new string[] { "41", "63", "74", "69", "76", "65", "20", "51", "75", "65", "73", "74", "73" };
         private GMemProcess torchlightProcess           = new GMemProcess(TLMemoryInfo.gameName, TLMemoryInfo.moduleName);
         private ptrObject mainPTR;
         [Fact]
@@ -45,6 +49,50 @@ namespace GMem.Test
         {
             mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightPlayerAddress, TLMemoryInfo.torchlightPlayerGoldOffsets);
             Assert.Equal(playerGold, torchlightProcess.read<int>(mainPTR));
+        }
+
+        [Fact]
+        public void read_function_reads_short()
+        {
+            mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightPlayerAddress, TLMemoryInfo.torchlightPlayerGoldOffsets);
+            Assert.Equal(playerGold, torchlightProcess.read<short>(mainPTR));
+        }
+
+        [Fact]
+        public void read_function_reads_long()
+        {
+            mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightPlayerAddress, TLMemoryInfo.torchlightPlayerGoldOffsets);
+            Assert.Equal(playerGoldLong, torchlightProcess.read<long>(mainPTR));
+        }
+
+        [Fact]
+        public void read_function_reads_string()
+        {
+            mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightUIAddress, TLMemoryInfo.torchlightUIACLabelOffsets);
+            Assert.Equal(UIACLabel, torchlightProcess.read<string>(mainPTR, UIACLabel.Length));
+        }
+
+
+        [Fact]
+        public void read_function_reads_rawbytes()
+        {
+            mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightUIAddress, TLMemoryInfo.torchlightUIACLabelOffsets);
+            var dataBuffer = torchlightProcess.read<byte[]>(mainPTR, rawBytes.Length);
+            for (int i = 0; i < rawBytes.Length; i++)
+            {
+                Assert.Equal(dataBuffer[i], rawBytes[i]);
+            }
+        }
+
+        [Fact]
+        public void read_functions_reads_AOBHexString()
+        {
+            mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightUIAddress, TLMemoryInfo.torchlightUIACLabelOffsets);
+            var dataBuffer = torchlightProcess.read<string[]>(mainPTR, AOB.Length);
+            for (int i = 0; i < AOB.Length; i++)
+            {
+                Assert.Equal(dataBuffer[i], AOB[i]);
+            }
         }
 
         [Fact]

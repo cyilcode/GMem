@@ -12,9 +12,11 @@ namespace GMem.Test
         public static string gameName                       = "Torchlight2";
         public static string moduleName                     = "Torchlight2";
         public static int torchlightPlayerAddress           = 0x031CFAA4;
+        public static int torchlightUIAddress               = 0x03441234;
         public static int[] torchlightPlayerManaOffsets     = new int[] { 0x14, 0x584 };
         public static int[] torchlightPlayerSkillOffsets    = new int[] { 0x14, 0x5ac };
         public static int[] torchlightPlayerGoldOffsets     = new int[] { 0x14, 0x590 };
         public static int[] torchlightPlayerStatsOffsets    = new int[] { 0x14, 0x5a8 };
+        public static int[] torchlightUIACLabelOffsets      = new int[] { 0x6c, 0x34, 0x260, 0x10c, 0x0 };
     }
 }
