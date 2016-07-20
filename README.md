@@ -6,7 +6,7 @@ A memory management tool for C# which is
  3. Object oriented - So that what makes your life easier doesn't make your code look bad.
 
 # How to use ?
-
+```csharp
     // Get an instance of GMemProcess.
     GMemProcess gameProc = new GMemProcess("processname", "ModuleName");
     /* ptrObject object holds;
@@ -23,7 +23,7 @@ A memory management tool for C# which is
     int intvalue = gameProc.read<int>(obj);
     // Write
     bool iswritten = gameProc.write<int>(obj, 50);
-    
+``` 
 # How to test ?
 Tests for this solution were done on steam version of Torchlight 2. There are further information on test documents.
 
