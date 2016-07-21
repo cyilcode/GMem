@@ -14,11 +14,16 @@ namespace GMem.Test
     /// </summary>
     public class GMemWriteTests
     {
-        private const int playerGoldToSet           = 1338;
-        private const float playerManaToSet         = 32.2f;
-        private const byte playerSkillPointsToSet   = 85;
-        private const double playerStatsToSet       = 1.06099789589765E-312; // 83 stat points as int.
-        private GMemProcess torchlightProcess       = new GMemProcess(TLMemoryInfo.gameName, TLMemoryInfo.moduleName);
+        private const int playerGoldToSet               = 1338;
+        private const float playerManaToSet             = 32.2f;
+        private const byte playerSkillPointsToSet       = 85;
+        private const double playerStatsToSet           = 1.06099789589765E-312; // 83 stat points as int.
+        private const string UIACLabel                  = "Bctive Quests";
+        // "Active Quests" as string
+        private readonly byte[] rawBytes                = new byte[] { 65, 99, 116, 105, 118, 101, 32, 81, 117, 101, 115, 116, 115 };
+        // "Active Questt" as string
+        private readonly string[] hexAOB                = new string[] { "41", "63", "74", "69", "76", "65", "20", "51", "75", "65", "73", "74", "74" };
+        private GMemProcess torchlightProcess           = new GMemProcess(TLMemoryInfo.gameName, TLMemoryInfo.moduleName);
         private ptrObject mainPTR;
         // Attention: You need to pause the game in order to make this test result viable because of mana regeneration.
         [Fact]
@@ -59,6 +64,42 @@ namespace GMem.Test
             Assert.Equal(iswritten, true);
             double memoryGoldValue = torchlightProcess.read<int>(mainPTR);
             Assert.Equal(memoryGoldValue, playerGoldToSet);
+        }
+
+        [Fact]
+        public void write_function_writes_string()
+        {
+            mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightUIAddress, TLMemoryInfo.torchlightUIACLabelOffsets);
+            bool iswritten = torchlightProcess.write<string>(mainPTR, UIACLabel);
+            Assert.Equal(iswritten, true);
+            string memoryStringValue = torchlightProcess.read<string>(mainPTR, UIACLabel.Length);
+            Assert.Equal(memoryStringValue, UIACLabel);
+        }
+
+        [Fact]
+        public void write_function_writes_rawAOB()
+        {
+            mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightUIAddress, TLMemoryInfo.torchlightUIACLabelOffsets);
+            bool iswritten = torchlightProcess.write<byte[]>(mainPTR, rawBytes);
+            Assert.Equal(iswritten, true);
+            byte[] memoryBytes = torchlightProcess.read<byte[]>(mainPTR, rawBytes.Length);
+            for (int i = 0; i < rawBytes.Length; i++)
+            {
+                Assert.Equal(memoryBytes[i], rawBytes[i]);
+            }
+        }
+
+        [Fact]
+        public void write_function_writes_stringAOB()
+        {
+            mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightUIAddress, TLMemoryInfo.torchlightUIACLabelOffsets);
+            bool iswritten = torchlightProcess.write<string[]>(mainPTR, hexAOB);
+            Assert.Equal(iswritten, true);
+            string[] memoryBytes = torchlightProcess.read<string[]>(mainPTR, hexAOB.Length);
+            for (int i = 0; i < rawBytes.Length; i++)
+            {
+                Assert.Equal(memoryBytes[i], hexAOB[i]);
+            }
         }
 
         [Fact]

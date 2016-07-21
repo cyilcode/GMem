@@ -103,7 +103,7 @@ public class GMemProcess
     /// Read the address and converts it to the given data type.
     /// </summary>
     /// <typeparam name="T">Returning Type</typeparam>
-    /// <param name="ptrObj">Calculated ptrObject</param>
+    /// <param name="ptrObj">Calculated ptrObject <see cref="create_ptr_object(int, int[])"/> function.</param>
     /// <param name="length">Size of Array</param>
     /// <returns>Value that the given address holds.</returns>
     public T read<T>(ptrObject ptrObj, int length)
@@ -121,13 +121,26 @@ public class GMemProcess
         throw new InvalidOperationException("The data type you have entered is not valid.");
     }
 
+    /// <summary>
+    /// Writes the given value to the address that was calculated.
+    /// </summary>
+    /// <typeparam name="T">Data type to write</typeparam>
+    /// <param name="ptrObj">Calculated ptrObject <see cref="create_ptr_object(int, int[])"/> function.</param>
+    /// <param name="value">Data to write.</param>
+    /// <returns>True on success.</returns>
     public bool write<T>(ptrObject ptrObj, object value)
     {
-        return WriteProcessMemory(ptrObj.processHandle, ptrObj.calculatedAddress, prepWriteData<T>(value), Marshal.SizeOf(typeof(T)), ref g_bytesRead);
+        int sizeoft;
+        if (typeof(T) == typeof(string)) sizeoft = value.ToString().Length;
+        else if (typeof(T) == typeof(byte[])) sizeoft = ((byte[])value).Length;
+        else if (typeof(T) == typeof(string[])) sizeoft = ((string[])value).Length;
+        else sizeoft = Marshal.SizeOf(typeof(T));
+        return WriteProcessMemory(ptrObj.processHandle, ptrObj.calculatedAddress, prepWriteData<T>(value), sizeoft, ref g_bytesRead);
     }
 
-    public byte[] prepWriteData<T>(object value)
+    private byte[] prepWriteData<T>(object value)
     {
+        // This functions works great but looks really bad. Will do something about it after i get everything done.
         if (typeof(T) == typeof(int))
             return BitConverter.IsLittleEndian ? BitConverter.GetBytes(Convert.ToInt32(value)) : BitConverter.GetBytes(Convert.ToInt32(value)).Reverse().ToArray();
         else if (typeof(T) == typeof(float))
@@ -136,8 +149,24 @@ public class GMemProcess
             return BitConverter.IsLittleEndian ? BitConverter.GetBytes(Convert.ToDouble(value)) : BitConverter.GetBytes(Convert.ToDouble(value)).Reverse().ToArray();
         else if (typeof(T) == typeof(byte))
             return BitConverter.IsLittleEndian ? BitConverter.GetBytes(Convert.ToByte(value)) : BitConverter.GetBytes(Convert.ToByte(value)).Reverse().ToArray();
+        else if (typeof(T) == typeof(string))
+            return BitConverter.IsLittleEndian ? Encoding.UTF8.GetBytes(value.ToString()) : Encoding.UTF8.GetBytes(value.ToString()).Reverse().ToArray();
+        else if (typeof(T) == typeof(byte[]))
+            return BitConverter.IsLittleEndian ? (byte[])value : ((byte[])value).Reverse().ToArray();
+        else if (typeof(T) == typeof(string[]))
+            return BitConverter.IsLittleEndian ? stringToAOB((string[])value) : stringToAOB((string[])value).Reverse().ToArray();
         else
             throw new InvalidCastException("The data type you have entered is not valid.");
+    }
+
+    private byte[] stringToAOB(string[] dataBuffer)
+    {
+        byte[] fixedBytes = new byte[dataBuffer.Length];
+        for (int i = 0; i < dataBuffer.Length; i++)
+        {
+            fixedBytes[i] = Convert.ToByte(dataBuffer[i], 16);
+        }
+        return fixedBytes;
     }
 
     private ProcessModule get_module_by_name(Process prcs)

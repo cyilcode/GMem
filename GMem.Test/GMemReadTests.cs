@@ -77,7 +77,7 @@ namespace GMem.Test
         public void read_function_reads_rawbytes()
         {
             mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightUIAddress, TLMemoryInfo.torchlightUIACLabelOffsets);
-            var dataBuffer = torchlightProcess.read<byte[]>(mainPTR, rawBytes.Length);
+            byte[] dataBuffer = torchlightProcess.read<byte[]>(mainPTR, rawBytes.Length);
             for (int i = 0; i < rawBytes.Length; i++)
             {
                 Assert.Equal(dataBuffer[i], rawBytes[i]);
@@ -88,7 +88,7 @@ namespace GMem.Test
         public void read_functions_reads_AOBHexString()
         {
             mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightUIAddress, TLMemoryInfo.torchlightUIACLabelOffsets);
-            var dataBuffer = torchlightProcess.read<string[]>(mainPTR, AOB.Length);
+            string[] dataBuffer = torchlightProcess.read<string[]>(mainPTR, AOB.Length);
             for (int i = 0; i < AOB.Length; i++)
             {
                 Assert.Equal(dataBuffer[i], AOB[i]);
