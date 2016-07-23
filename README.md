@@ -35,7 +35,5 @@ A memory management tool for C# which is
 # How to test ?
 Tests for this solution were done on steam version of Torchlight 2. There are further information on test documents.
 
-#Stage - Work in Progress
-
- - Implementations are done. Code refactoring and cleaning in progress.
+#Stage - Completed
 
