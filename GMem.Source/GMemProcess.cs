@@ -79,11 +79,14 @@ public class GMemProcess
     /// <returns>Value that the given address holds.</returns>
     public T read<T>(ptrObject ptrObj)
     {
+        // Get the size of T.
         int sizeoft = Marshal.SizeOf(typeof(T));
         byte[] dataBuffer = new byte[sizeoft];
         ReadProcessMemory(ptrObj.processHandle, ptrObj.calculatedAddress, dataBuffer, sizeoft, ref g_bytesRead);
+        // Check here for more info about this if statement https://msdn.microsoft.com/en-us/library/system.bitconverter.islittleendian(v=vs.110).aspx
         if (!BitConverter.IsLittleEndian)
             Array.Reverse(dataBuffer);
+        // Rest just returning converted data.
         if (typeof(T) == typeof(int))
             return (T)(object)BitConverter.ToInt32(dataBuffer, 0);
         else if (typeof(T) == typeof(float))
@@ -108,6 +111,7 @@ public class GMemProcess
     /// <returns>Value that the given address holds.</returns>
     public T read<T>(ptrObject ptrObj, int length)
     {
+        // Since we need length to read strings or AOB's, i needed to seperate these types here in an overload.
         byte[] dataBuffer = new byte[length];
         ReadProcessMemory(ptrObj.processHandle, ptrObj.calculatedAddress, dataBuffer, dataBuffer.Length, ref g_bytesRead);
         if (!BitConverter.IsLittleEndian)
@@ -116,7 +120,10 @@ public class GMemProcess
             return (T)(object)Encoding.UTF8.GetString(dataBuffer);
         else if (typeof(T) == typeof(byte[]))
             return (T)(object)dataBuffer;
-        else if (typeof(T) == typeof(string[]))
+        /* string[] is completely arbitrary. Its literally just the same as byte[] 
+           but instead of numeric bytes you see hexadecimal values as strings.
+         */
+        else if (typeof(T) == typeof(string[])) 
             return (T)(object)(BitConverter.ToString(dataBuffer).Split('-'));
         throw new InvalidOperationException("The data type you have entered is not valid.");
     }
@@ -162,10 +169,7 @@ public class GMemProcess
     private byte[] stringToAOB(string[] dataBuffer)
     {
         byte[] fixedBytes = new byte[dataBuffer.Length];
-        for (int i = 0; i < dataBuffer.Length; i++)
-        {
-            fixedBytes[i] = Convert.ToByte(dataBuffer[i], 16);
-        }
+        for (int i = 0; i < dataBuffer.Length; i++) fixedBytes[i] = Convert.ToByte(dataBuffer[i], 16);
         return fixedBytes;
     }
 

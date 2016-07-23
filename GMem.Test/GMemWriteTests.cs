@@ -83,10 +83,7 @@ namespace GMem.Test
             bool iswritten = torchlightProcess.write<byte[]>(mainPTR, rawBytes);
             Assert.Equal(iswritten, true);
             byte[] memoryBytes = torchlightProcess.read<byte[]>(mainPTR, rawBytes.Length);
-            for (int i = 0; i < rawBytes.Length; i++)
-            {
-                Assert.Equal(memoryBytes[i], rawBytes[i]);
-            }
+            for (int i = 0; i < rawBytes.Length; i++) Assert.Equal(memoryBytes[i], rawBytes[i]);
         }
 
         [Fact]
@@ -96,10 +93,7 @@ namespace GMem.Test
             bool iswritten = torchlightProcess.write<string[]>(mainPTR, hexAOB);
             Assert.Equal(iswritten, true);
             string[] memoryBytes = torchlightProcess.read<string[]>(mainPTR, hexAOB.Length);
-            for (int i = 0; i < rawBytes.Length; i++)
-            {
-                Assert.Equal(memoryBytes[i], hexAOB[i]);
-            }
+            for (int i = 0; i < rawBytes.Length; i++) Assert.Equal(memoryBytes[i], hexAOB[i]);
         }
 
         [Fact]

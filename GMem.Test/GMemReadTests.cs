@@ -78,10 +78,7 @@ namespace GMem.Test
         {
             mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightUIAddress, TLMemoryInfo.torchlightUIACLabelOffsets);
             byte[] dataBuffer = torchlightProcess.read<byte[]>(mainPTR, rawBytes.Length);
-            for (int i = 0; i < rawBytes.Length; i++)
-            {
-                Assert.Equal(dataBuffer[i], rawBytes[i]);
-            }
+            for (int i = 0; i < rawBytes.Length; i++) Assert.Equal(dataBuffer[i], rawBytes[i]);
         }
 
         [Fact]
@@ -89,10 +86,7 @@ namespace GMem.Test
         {
             mainPTR = torchlightProcess.create_ptr_object(TLMemoryInfo.torchlightUIAddress, TLMemoryInfo.torchlightUIACLabelOffsets);
             string[] dataBuffer = torchlightProcess.read<string[]>(mainPTR, AOB.Length);
-            for (int i = 0; i < AOB.Length; i++)
-            {
-                Assert.Equal(dataBuffer[i], AOB[i]);
-            }
+            for (int i = 0; i < AOB.Length; i++) Assert.Equal(dataBuffer[i], AOB[i]);
         }
 
         [Fact]
