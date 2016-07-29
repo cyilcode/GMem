@@ -76,11 +76,14 @@ public class GMemProcess
     /// </summary>
     /// <typeparam name="T">Returning Type</typeparam>
     /// <param name="ptrObj">Calculated ptrObject</param>
+    /// <param name="readLength">For string and array types</param>
     /// <returns>Value that the given address holds.</returns>
-    public T read<T>(ptrObject ptrObj)
+    public T read<T>(ptrObject ptrObj, int readLength = -1)
     {
-        // Get the size of T.
-        int sizeoft = Marshal.SizeOf(typeof(T));
+        int sizeoft;
+        if (readLength != -1) // For strings and array types.
+            sizeoft = readLength;
+        else sizeoft = Marshal.SizeOf(typeof(T));
         byte[] dataBuffer = new byte[sizeoft];
         ReadProcessMemory(ptrObj.processHandle, ptrObj.calculatedAddress, dataBuffer, sizeoft, ref g_bytesRead);
         // Check here for more info about this if statement https://msdn.microsoft.com/en-us/library/system.bitconverter.islittleendian(v=vs.110).aspx
@@ -99,33 +102,16 @@ public class GMemProcess
             return (T)(object)BitConverter.ToInt64(dataBuffer, 0);
         else if (typeof(T) == typeof(byte))
             return (T)(object)dataBuffer[0];
-        throw new InvalidCastException("The data type you have entered is not valid.");
-    }
-
-    /// <summary>
-    /// Read the address and converts it to the given data type.
-    /// </summary>
-    /// <typeparam name="T">Returning Type</typeparam>
-    /// <param name="ptrObj">Calculated ptrObject <see cref="create_ptr_object(int, int[])"/> function.</param>
-    /// <param name="length">Size of Array</param>
-    /// <returns>Value that the given address holds.</returns>
-    public T read<T>(ptrObject ptrObj, int length)
-    {
-        // Since we need length to read strings or AOB's, i needed to seperate these types here in an overload.
-        byte[] dataBuffer = new byte[length];
-        ReadProcessMemory(ptrObj.processHandle, ptrObj.calculatedAddress, dataBuffer, dataBuffer.Length, ref g_bytesRead);
-        if (!BitConverter.IsLittleEndian)
-            Array.Reverse(dataBuffer);
-        if (typeof(T) == typeof(string))
+        else if (typeof(T) == typeof(string))
             return (T)(object)Encoding.UTF8.GetString(dataBuffer);
         else if (typeof(T) == typeof(byte[]))
             return (T)(object)dataBuffer;
         /* string[] is completely arbitrary. Its literally just the same as byte[] 
            but instead of numeric bytes you see hexadecimal values as strings.
          */
-        else if (typeof(T) == typeof(string[])) 
+        else if (typeof(T) == typeof(string[]))
             return (T)(object)(BitConverter.ToString(dataBuffer).Split('-'));
-        throw new InvalidOperationException("The data type you have entered is not valid.");
+        throw new InvalidCastException("The data type you have entered is not valid.");
     }
 
     /// <summary>

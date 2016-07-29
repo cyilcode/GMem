@@ -9,33 +9,31 @@ A memory management tool for C# which is
 # How to use ?
 ```csharp
     // Get an instance of GMemProcess.
-    GMemProcess gameProc = new GMemProcess("processname", "ModuleName");
+    GMemProcess gProc = new GMemProcess("processname", "ModuleName");
     /* ptrObject object holds;
-     calculated address which is (modulebase + pointer address) + offsets or direct address if its not a pointer.
-     processHandle which is the handle pointer of your process
+     calculated address is (modulebase + pointer address) + offsets or direct address if its not a pointer.
+     processHandle is the handle pointer of your process
      You can create a ptrObject like below
      */
-    ptrObject obj = gameProc.create_ptr_object(0xFFFFFFFF, int[]{ 0xFF, 0x10 });
+    ptrObject obj = gProc.create_ptr_object(0xFFFFFFFF, int[]{ 0xFF, 0x10 });
     /*
     Reads and writes are so simple.
     GMem supports almost all types that you might need.
     */
     // Read
-    int intvalue = gameProc.read<int>(obj);
+    int intvalue = gProc.read<int>(obj);
     // Write
 	int valueToWrite = 50;
-    bool iswritten = gameProc.write<int>(obj, valueToWrite);
-	// If you want to read string or byte[] you can use the read function overload
+    bool iswritten = gProc.write<int>(obj, valueToWrite);
+	// If you want to read string or array of bytes
 	int stringlength = 10;
-	string text = gameProc.read<string>(obj, stringlength);
+	string text = gProc.read<string>(obj, stringlength);
 	// or
 	int byteLength = 10;
-	byte[] dataBuffer = gameProc.read<byte[]>(obj, 10);
+	byte[] dataBuffer = gProc.read<byte[]>(obj, 10);
 ``` 
 # How to test ?
 Tests for this solution were done on steam version of Torchlight 2. There are further information on test documents.
 
-#Stage - Work in Progress
-
- - Implementations are done. Code refactoring and cleaning in progress.
+#Stage - Completed
 
