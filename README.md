@@ -6,6 +6,10 @@ A memory management tool for C# which is
  3. Object oriented - So that what makes your life easier doesn't make your code look bad.
  4. Extendable - I tried to keep the code as simple as i can so that you can extend it for your own work.
 
+# GMem is also on NuGet
+
+More information here: https://www.nuget.org/packages/GMem/
+
 # How to use ?
 ```csharp
     // Get an instance of GMemProcess.
